@@ -4,7 +4,7 @@ using CMS.Modules;
 
 namespace XperienceCommunity.WorkspaceRestrictions;
 
-internal class WorkspaceContentTypeBindingInstaller(IInfoProvider<ResourceInfo> resourceInfoProvider)
+internal class WorkspaceRestrictionsInstaller(IInfoProvider<ResourceInfo> resourceInfoProvider)
 {
     private const string ResourceName = "XperienceCommunity.WorkspaceRestrictions";
     private const string ResourceDisplayName = "Workspace Restrictions";

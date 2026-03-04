@@ -11,7 +11,7 @@ namespace XperienceCommunity.WorkspaceRestrictions;
 
 internal class WorkspaceRestrictionsModule : Module
 {
-    private WorkspaceContentTypeBindingInstaller? installer;
+    private WorkspaceRestrictionsInstaller? installer;
 
     public WorkspaceRestrictionsModule()
         : base(nameof(WorkspaceRestrictionsModule))
@@ -22,7 +22,7 @@ internal class WorkspaceRestrictionsModule : Module
     {
         base.OnInit(parameters);
 
-        installer = new WorkspaceContentTypeBindingInstaller(
+        installer = new WorkspaceRestrictionsInstaller(
             parameters.Services.GetRequiredService<IInfoProvider<ResourceInfo>>());
 
         ApplicationEvents.Initialized.Execute += InitializeModule;
