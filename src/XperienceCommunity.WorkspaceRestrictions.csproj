@@ -17,6 +17,7 @@
 		<Description>
 			Restrict which reusable content types are available when creating content items in a workspace in Xperience by Kentico.
 		</Description>
+		<PackageProjectUrl>https://github.com/liamgold/xperience-community-workspace-restrictions</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/liamgold/xperience-community-workspace-restrictions</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
