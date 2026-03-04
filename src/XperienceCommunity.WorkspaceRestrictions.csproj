@@ -9,7 +9,7 @@
 	<PropertyGroup>
 		<Title>Xperience Community Workspace Restrictions</Title>
 		<PackageId>XperienceCommunity.WorkspaceRestrictions</PackageId>
-		<Version>1.0.0</Version>
+		<Version>1.0.0-preview.1</Version>
 		<Authors>Liam Goldfinch</Authors>
 		<Company>Liam Goldfinch</Company>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
