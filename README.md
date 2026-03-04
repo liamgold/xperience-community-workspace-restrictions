@@ -1,4 +1,4 @@
-# XperienceCommunity.WorkspaceRestrictions
+# Xperience Community: Workspace Restrictions
 
 [![NuGet](https://img.shields.io/nuget/v/XperienceCommunity.WorkspaceRestrictions)](https://www.nuget.org/packages/XperienceCommunity.WorkspaceRestrictions)
 
