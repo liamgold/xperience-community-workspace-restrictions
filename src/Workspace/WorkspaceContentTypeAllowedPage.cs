@@ -5,8 +5,8 @@ using XperienceCommunity.WorkspaceRestrictions;
 
 [assembly: UIPage(
     typeof(WorkspaceEditSection),
-    WorkspaceContentTypeBindingPage.SLUG,
-    typeof(WorkspaceContentTypeBindingPage),
+    WorkspaceContentTypeAllowedPage.SLUG,
+    typeof(WorkspaceContentTypeAllowedPage),
     "Allowed content types",
     TemplateNames.BINDING,
     UIPageOrder.NoOrder)]
@@ -14,16 +14,16 @@ using XperienceCommunity.WorkspaceRestrictions;
 namespace XperienceCommunity.WorkspaceRestrictions;
 
 [UINavigation(false)]
-public class WorkspaceContentTypeBindingPage : InfoBindingPage<WorkspaceContentTypeBindingInfo, DataClassInfo>
+public class WorkspaceContentTypeAllowedPage : InfoBindingPage<WorkspaceContentTypeAllowedInfo, DataClassInfo>
 {
     internal const string SLUG = "allowed-content-types";
 
     [PageParameter(typeof(IntPageModelBinder), typeof(WorkspaceEditSection))]
     public override int EditedObjectId { get; set; }
 
-    protected override string SourceBindingColumn => nameof(WorkspaceContentTypeBindingInfo.WorkspaceContentTypeBindingWorkspaceID);
+    protected override string SourceBindingColumn => nameof(WorkspaceContentTypeAllowedInfo.WorkspaceContentTypeAllowedWorkspaceID);
 
-    protected override string TargetBindingColumn => nameof(WorkspaceContentTypeBindingInfo.WorkspaceContentTypeBindingClassID);
+    protected override string TargetBindingColumn => nameof(WorkspaceContentTypeAllowedInfo.WorkspaceContentTypeAllowedClassID);
 
     public override async Task ConfigurePage()
     {

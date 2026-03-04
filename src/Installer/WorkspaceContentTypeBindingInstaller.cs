@@ -12,8 +12,8 @@ internal class WorkspaceContentTypeBindingInstaller(IInfoProvider<ResourceInfo> 
     public void Install()
     {
         var resource = InstallResource();
-        InstallBindingClass(resource);
-        InstallExclusionClass(resource);
+        InstallAllowedClass(resource);
+        InstallExcludedClass(resource);
     }
 
     private ResourceInfo InstallResource()
@@ -32,22 +32,22 @@ internal class WorkspaceContentTypeBindingInstaller(IInfoProvider<ResourceInfo> 
         return resource;
     }
 
-    private static void InstallBindingClass(ResourceInfo resource)
+    private static void InstallAllowedClass(ResourceInfo resource)
     {
-        var info = DataClassInfoProvider.GetDataClassInfo(WorkspaceContentTypeBindingInfo.TYPEINFO.ObjectClassName)
-            ?? DataClassInfo.New(WorkspaceContentTypeBindingInfo.OBJECT_TYPE);
+        var info = DataClassInfoProvider.GetDataClassInfo(WorkspaceContentTypeAllowedInfo.TYPEINFO.ObjectClassName)
+            ?? DataClassInfo.New(WorkspaceContentTypeAllowedInfo.OBJECT_TYPE);
 
-        info.ClassName = WorkspaceContentTypeBindingInfo.TYPEINFO.ObjectClassName;
-        info.ClassTableName = WorkspaceContentTypeBindingInfo.TYPEINFO.ObjectClassName.Replace(".", "_");
-        info.ClassDisplayName = "Workspace Content Type Binding";
+        info.ClassName = WorkspaceContentTypeAllowedInfo.TYPEINFO.ObjectClassName;
+        info.ClassTableName = WorkspaceContentTypeAllowedInfo.TYPEINFO.ObjectClassName.Replace(".", "_");
+        info.ClassDisplayName = "Workspace Content Type Allowed";
         info.ClassResourceID = resource.ResourceID;
         info.ClassType = ClassType.OTHER;
 
-        var formInfo = FormHelper.GetBasicFormDefinition(nameof(WorkspaceContentTypeBindingInfo.WorkspaceContentTypeBindingID));
+        var formInfo = FormHelper.GetBasicFormDefinition(nameof(WorkspaceContentTypeAllowedInfo.WorkspaceContentTypeAllowedID));
 
         formInfo.AddFormItem(new FormFieldInfo
         {
-            Name = nameof(WorkspaceContentTypeBindingInfo.WorkspaceContentTypeBindingWorkspaceID),
+            Name = nameof(WorkspaceContentTypeAllowedInfo.WorkspaceContentTypeAllowedWorkspaceID),
             Visible = false,
             DataType = FieldDataType.Integer,
             Enabled = true,
@@ -55,7 +55,7 @@ internal class WorkspaceContentTypeBindingInstaller(IInfoProvider<ResourceInfo> 
 
         formInfo.AddFormItem(new FormFieldInfo
         {
-            Name = nameof(WorkspaceContentTypeBindingInfo.WorkspaceContentTypeBindingClassID),
+            Name = nameof(WorkspaceContentTypeAllowedInfo.WorkspaceContentTypeAllowedClassID),
             Visible = false,
             DataType = FieldDataType.Integer,
             Enabled = true,
@@ -69,22 +69,22 @@ internal class WorkspaceContentTypeBindingInstaller(IInfoProvider<ResourceInfo> 
         }
     }
 
-    private static void InstallExclusionClass(ResourceInfo resource)
+    private static void InstallExcludedClass(ResourceInfo resource)
     {
-        var info = DataClassInfoProvider.GetDataClassInfo(WorkspaceContentTypeExclusionInfo.TYPEINFO.ObjectClassName)
-            ?? DataClassInfo.New(WorkspaceContentTypeExclusionInfo.OBJECT_TYPE);
+        var info = DataClassInfoProvider.GetDataClassInfo(WorkspaceContentTypeExcludedInfo.TYPEINFO.ObjectClassName)
+            ?? DataClassInfo.New(WorkspaceContentTypeExcludedInfo.OBJECT_TYPE);
 
-        info.ClassName = WorkspaceContentTypeExclusionInfo.TYPEINFO.ObjectClassName;
-        info.ClassTableName = WorkspaceContentTypeExclusionInfo.TYPEINFO.ObjectClassName.Replace(".", "_");
-        info.ClassDisplayName = "Workspace Content Type Exclusion";
+        info.ClassName = WorkspaceContentTypeExcludedInfo.TYPEINFO.ObjectClassName;
+        info.ClassTableName = WorkspaceContentTypeExcludedInfo.TYPEINFO.ObjectClassName.Replace(".", "_");
+        info.ClassDisplayName = "Workspace Content Type Excluded";
         info.ClassResourceID = resource.ResourceID;
         info.ClassType = ClassType.OTHER;
 
-        var formInfo = FormHelper.GetBasicFormDefinition(nameof(WorkspaceContentTypeExclusionInfo.WorkspaceContentTypeExclusionID));
+        var formInfo = FormHelper.GetBasicFormDefinition(nameof(WorkspaceContentTypeExcludedInfo.WorkspaceContentTypeExcludedID));
 
         formInfo.AddFormItem(new FormFieldInfo
         {
-            Name = nameof(WorkspaceContentTypeExclusionInfo.WorkspaceContentTypeExclusionWorkspaceID),
+            Name = nameof(WorkspaceContentTypeExcludedInfo.WorkspaceContentTypeExcludedWorkspaceID),
             Visible = false,
             DataType = FieldDataType.Integer,
             Enabled = true,
@@ -92,7 +92,7 @@ internal class WorkspaceContentTypeBindingInstaller(IInfoProvider<ResourceInfo> 
 
         formInfo.AddFormItem(new FormFieldInfo
         {
-            Name = nameof(WorkspaceContentTypeExclusionInfo.WorkspaceContentTypeExclusionClassID),
+            Name = nameof(WorkspaceContentTypeExcludedInfo.WorkspaceContentTypeExcludedClassID),
             Visible = false,
             DataType = FieldDataType.Integer,
             Enabled = true,

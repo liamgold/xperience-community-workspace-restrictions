@@ -10,15 +10,15 @@ namespace XperienceCommunity.WorkspaceRestrictions;
 
 public class WorkspaceContentTypeFilterExtender : PageExtender<ContentItemCreate>
 {
-    private readonly IInfoProvider<WorkspaceContentTypeBindingInfo> bindingProvider;
-    private readonly IInfoProvider<WorkspaceContentTypeExclusionInfo> exclusionProvider;
+    private readonly IInfoProvider<WorkspaceContentTypeAllowedInfo> allowedProvider;
+    private readonly IInfoProvider<WorkspaceContentTypeExcludedInfo> excludedProvider;
 
     public WorkspaceContentTypeFilterExtender(
-        IInfoProvider<WorkspaceContentTypeBindingInfo> bindingProvider,
-        IInfoProvider<WorkspaceContentTypeExclusionInfo> exclusionProvider)
+        IInfoProvider<WorkspaceContentTypeAllowedInfo> allowedProvider,
+        IInfoProvider<WorkspaceContentTypeExcludedInfo> excludedProvider)
     {
-        this.bindingProvider = bindingProvider;
-        this.exclusionProvider = exclusionProvider;
+        this.allowedProvider = allowedProvider;
+        this.excludedProvider = excludedProvider;
     }
 
     public override async Task<TemplateClientProperties> ConfigureTemplateProperties(TemplateClientProperties properties)
@@ -34,16 +34,16 @@ public class WorkspaceContentTypeFilterExtender : PageExtender<ContentItemCreate
             return properties;
         }
 
-        var allowedClassIds = (await bindingProvider.Get()
-            .WhereEquals(nameof(WorkspaceContentTypeBindingInfo.WorkspaceContentTypeBindingWorkspaceID), workspaceId)
+        var allowedClassIds = (await allowedProvider.Get()
+            .WhereEquals(nameof(WorkspaceContentTypeAllowedInfo.WorkspaceContentTypeAllowedWorkspaceID), workspaceId)
             .GetEnumerableTypedResultAsync())
-            .Select(b => b.WorkspaceContentTypeBindingClassID)
+            .Select(b => b.WorkspaceContentTypeAllowedClassID)
             .ToHashSet();
 
-        var excludedClassIds = (await exclusionProvider.Get()
-            .WhereEquals(nameof(WorkspaceContentTypeExclusionInfo.WorkspaceContentTypeExclusionWorkspaceID), workspaceId)
+        var excludedClassIds = (await excludedProvider.Get()
+            .WhereEquals(nameof(WorkspaceContentTypeExcludedInfo.WorkspaceContentTypeExcludedWorkspaceID), workspaceId)
             .GetEnumerableTypedResultAsync())
-            .Select(b => b.WorkspaceContentTypeExclusionClassID)
+            .Select(b => b.WorkspaceContentTypeExcludedClassID)
             .ToHashSet();
 
         if (allowedClassIds.Count == 0 && excludedClassIds.Count == 0)

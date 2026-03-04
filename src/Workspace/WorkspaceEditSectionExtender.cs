@@ -16,12 +16,12 @@ public class WorkspaceEditSectionExtender : PageExtender<WorkspaceEditSection>
         items.Add(new NavigationItem
         {
             Label = "Allowed content types",
-            Path = WorkspaceContentTypeBindingPage.SLUG,
+            Path = WorkspaceContentTypeAllowedPage.SLUG,
         });
         items.Add(new NavigationItem
         {
             Label = "Excluded content types",
-            Path = WorkspaceContentTypeExclusionPage.SLUG,
+            Path = WorkspaceContentTypeExcludedPage.SLUG,
         });
 
         properties.Navigation.Items = items;

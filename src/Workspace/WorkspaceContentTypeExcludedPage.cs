@@ -5,8 +5,8 @@ using XperienceCommunity.WorkspaceRestrictions;
 
 [assembly: UIPage(
     typeof(WorkspaceEditSection),
-    WorkspaceContentTypeExclusionPage.SLUG,
-    typeof(WorkspaceContentTypeExclusionPage),
+    WorkspaceContentTypeExcludedPage.SLUG,
+    typeof(WorkspaceContentTypeExcludedPage),
     "Excluded content types",
     TemplateNames.BINDING,
     UIPageOrder.NoOrder)]
@@ -14,16 +14,16 @@ using XperienceCommunity.WorkspaceRestrictions;
 namespace XperienceCommunity.WorkspaceRestrictions;
 
 [UINavigation(false)]
-public class WorkspaceContentTypeExclusionPage : InfoBindingPage<WorkspaceContentTypeExclusionInfo, DataClassInfo>
+public class WorkspaceContentTypeExcludedPage : InfoBindingPage<WorkspaceContentTypeExcludedInfo, DataClassInfo>
 {
     internal const string SLUG = "excluded-content-types";
 
     [PageParameter(typeof(IntPageModelBinder), typeof(WorkspaceEditSection))]
     public override int EditedObjectId { get; set; }
 
-    protected override string SourceBindingColumn => nameof(WorkspaceContentTypeExclusionInfo.WorkspaceContentTypeExclusionWorkspaceID);
+    protected override string SourceBindingColumn => nameof(WorkspaceContentTypeExcludedInfo.WorkspaceContentTypeExcludedWorkspaceID);
 
-    protected override string TargetBindingColumn => nameof(WorkspaceContentTypeExclusionInfo.WorkspaceContentTypeExclusionClassID);
+    protected override string TargetBindingColumn => nameof(WorkspaceContentTypeExcludedInfo.WorkspaceContentTypeExcludedClassID);
 
     public override async Task ConfigurePage()
     {
