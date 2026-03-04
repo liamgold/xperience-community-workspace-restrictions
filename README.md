@@ -15,7 +15,7 @@ Restrict which reusable content types are available when creating content items 
 
 | Xperience by Kentico version | Package version |
 |------------------------------|-----------------|
-| >= 31.2.1                    | >= 0.1.0        |
+| >= 31.2.1                    | >= 1.0.0        |
 
 ## Installation
 
