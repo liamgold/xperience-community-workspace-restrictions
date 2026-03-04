@@ -1,5 +1,6 @@
-using CMS;
+using CMS.Base;
 using CMS.Core;
+using CMS.DataEngine;
 using CMS.Modules;
 using Microsoft.Extensions.DependencyInjection;
 using XperienceCommunity.WorkspaceRestrictions;

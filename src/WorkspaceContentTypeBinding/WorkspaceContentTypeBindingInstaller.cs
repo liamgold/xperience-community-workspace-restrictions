@@ -7,7 +7,7 @@ namespace XperienceCommunity.WorkspaceRestrictions;
 internal class WorkspaceContentTypeBindingInstaller(IInfoProvider<ResourceInfo> resourceInfoProvider)
 {
     private const string ResourceName = "XperienceCommunity.WorkspaceRestrictions";
-    private const string ResourceDisplayName = "Xperience Community Workspace Restrictions";
+    private const string ResourceDisplayName = "Workspace Restrictions";
 
     public void Install()
     {

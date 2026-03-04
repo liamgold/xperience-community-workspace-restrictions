@@ -1,5 +1,6 @@
 using CMS.DataEngine;
 using Kentico.Xperience.Admin.Base;
+using Kentico.Xperience.Admin.Base.Forms;
 using Kentico.Xperience.Admin.Base.UIPages;
 using XperienceCommunity.WorkspaceRestrictions;
 
