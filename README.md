@@ -15,7 +15,7 @@ Restrict which reusable content types are available when creating content items 
 
 | Xperience by Kentico version | Package version |
 |------------------------------|-----------------|
-| >= 31.2.1                    | >= 1.0.0        |
+| >= 31.2.1                    | >= 0.1.0        |
 
 ## Installation
 
@@ -33,6 +33,30 @@ No additional configuration is required. The package self-installs its database 
 2. Open the workspace you want to configure.
 3. Use the **Allowed content types** tab to specify an allow list, or the **Excluded content types** tab to specify an exclude list.
 4. Changes take effect immediately — no restart required.
+
+### Configuring allowed content types
+
+Use the **Allowed content types** tab to build an allow list for the workspace. Only the listed content types will appear when creating content items in this workspace.
+
+<a href="/src/images/AllowedContentTypes.png">
+  <img src="/src/images/AllowedContentTypes.png" width="800" alt="Allowed content types tab on a workspace in Xperience by Kentico">
+</a>
+
+### Configuring excluded content types
+
+Use the **Excluded content types** tab to build an exclude list. All content types except the listed ones will appear when creating content items in this workspace.
+
+<a href="/src/images/ExcludedContentTypes.png">
+  <img src="/src/images/ExcludedContentTypes.png" width="800" alt="Excluded content types tab on a workspace in Xperience by Kentico">
+</a>
+
+### Filtered content type picker
+
+When creating a content item, the content type picker is automatically filtered based on the workspace configuration.
+
+<a href="/src/images/FilteredContentTypePicker.png">
+  <img src="/src/images/FilteredContentTypePicker.png" width="800" alt="Filtered content type picker when creating a content item in Xperience by Kentico">
+</a>
 
 ## Contributing
 
