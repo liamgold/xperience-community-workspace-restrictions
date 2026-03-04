@@ -1,0 +1,12 @@
+version: 2
+updates:
+  # Maintain NuGet dependencies for main library
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "07:00"
+    ignore:
+      - dependency-name: "Kentico.Xperience.*"
+    open-pull-requests-limit: 5
