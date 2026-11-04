@@ -12,6 +12,10 @@ namespace XperienceCommunity.WorkspaceRestrictions;
 /// inside a transaction. Throwing from either event stops the move, and Kentico shows the editor its standard
 /// "move failed" error. The guard only runs during HTTP requests, so CI/CD restore, the migration tool and other
 /// processes without a request aren't affected.
+///
+/// The "Create new" dialog of a content item selector creates an item in the workspace root, then moves it into the
+/// chosen folder in the same request. The guard skips items created during the current request, because blocking
+/// that move would leave the new item in the root after an error. Issue #2 tracks restricting that dialog.
 /// </remarks>
 internal sealed class ContentItemMoveGuard(
     ContentTypeRestrictionResolver resolver,
@@ -21,15 +25,32 @@ internal sealed class ContentItemMoveGuard(
     private const string WORKSPACE_COLUMN = nameof(ContentItemInfo.ContentItemWorkspaceID);
     private const string FOLDER_COLUMN = nameof(ContentItemInfo.ContentItemContentFolderID);
 
+    // Stores the IDs of content items created during the current request in HttpContext.Items.
+    private static readonly object CreatedItemIdsKey = new();
+
     public void Register()
     {
+        ContentItemInfo.TYPEINFO.Events.Insert.After += OnInsertAfter;
         ContentItemInfo.TYPEINFO.Events.Update.Before += OnUpdateBefore;
         ContentItemInfo.TYPEINFO.Events.BulkUpdate.Before += OnBulkUpdateBefore;
     }
 
+    private void OnInsertAfter(object? sender, ObjectEventArgs e)
+    {
+        if (httpContextAccessor?.HttpContext is { } httpContext && e.Object is ContentItemInfo item)
+        {
+            if (httpContext.Items[CreatedItemIdsKey] is not HashSet<int> ids)
+            {
+                httpContext.Items[CreatedItemIdsKey] = ids = [];
+            }
+
+            ids.Add(item.ContentItemID);
+        }
+    }
+
     private void OnUpdateBefore(object? sender, ObjectEventArgs e)
     {
-        if (!IsHttpRequest() || e.Object is not ContentItemInfo item)
+        if (!IsHttpRequest() || e.Object is not ContentItemInfo item || WasCreatedInRequest(item.ContentItemID))
         {
             return;
         }
@@ -53,8 +74,9 @@ internal sealed class ContentItemMoveGuard(
         // The check runs before Kentico commits the transaction, so throwing rolls the whole move back.
         var before = GetItems(e.WhereCondition).ToDictionary(item => item.ContentItemID, item => (item.ContentItemWorkspaceID, item.ContentItemContentFolderID));
         e.CallWhenFinished(() => EnsureAllowed(GetItems(e.WhereCondition)
-            .Where(item => !before.TryGetValue(item.ContentItemID, out var original)
-                || original != (item.ContentItemWorkspaceID, item.ContentItemContentFolderID))
+            .Where(item => !WasCreatedInRequest(item.ContentItemID)
+                && (!before.TryGetValue(item.ContentItemID, out var original)
+                || original != (item.ContentItemWorkspaceID, item.ContentItemContentFolderID)))
             .Select(item => new MovedItem(item.ContentItemContentTypeID, item.ContentItemWorkspaceID, item.ContentItemContentFolderID))));
     }
 
@@ -83,6 +105,9 @@ internal sealed class ContentItemMoveGuard(
     }
 
     private bool IsHttpRequest() => httpContextAccessor?.HttpContext != null;
+
+    private bool WasCreatedInRequest(int contentItemId) =>
+        httpContextAccessor?.HttpContext?.Items[CreatedItemIdsKey] is HashSet<int> ids && ids.Contains(contentItemId);
 
     private readonly record struct MovedItem(int ClassId, int WorkspaceId, int FolderId);
 }
