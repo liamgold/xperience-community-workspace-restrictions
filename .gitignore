@@ -124,7 +124,9 @@ nCrunchTemp_*
 .idea/dictionaries/
 .idea/shelf/
 
-# Claude Code
-.claude/*
-!.claude/commands/
-!.claude/agents/
+# Claude Code local state (the shared .claude/ folder, including skills, IS committed)
+.claude/settings.local.json
+.claude/cache/
+
+# Playwright MCP snapshots and screenshots
+.playwright-mcp/

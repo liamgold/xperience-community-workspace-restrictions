@@ -106,6 +106,21 @@ The repository includes a Dancing Goat sample site in `examples/DancingGoat`, ge
 
 3. Sign in to the administration at `http://localhost:46629/admin` as `administrator`, and configure a workspace under **Content hub** → **Configuration** → **Workspaces**.
 
+## Running the Tests
+
+Run the xUnit tests from the repository root:
+
+```powershell
+dotnet test --configuration Release
+```
+
+The SQL Server integration tests in `tests/FolderScopeDatabaseTests.cs` are skipped unless the `WORKSPACE_RESTRICTIONS_TEST_CONNECTION_STRING` environment variable is set. They test the unique index that the installer creates, and saves that happen at the same time. Point the variable at a database where the account can create and drop tables. Each test creates a table with a unique name and drops it afterwards. For example, with SQL Server LocalDB:
+
+```powershell
+$env:WORKSPACE_RESTRICTIONS_TEST_CONNECTION_STRING = 'Server=(localdb)\MSSQLLocalDB;Database=tempdb;Integrated Security=true;TrustServerCertificate=true'
+dotnet test --configuration Release
+```
+
 ## Contributing
 
 Feel free to submit issues or pull requests to the repository, this is a community package and everyone is welcome to support.
