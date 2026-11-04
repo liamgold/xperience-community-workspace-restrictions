@@ -30,11 +30,17 @@ When an editor creates a content item, the workspace configuration filters the c
 
 ![Filtered content type picker when creating a content item in Xperience by Kentico](https://raw.githubusercontent.com/liamgold/xperience-community-workspace-restrictions/main/src/images/FilteredContentTypePicker.png)
 
+When an editor moves content items in the Content hub, the package blocks the move if the target workspace or folder doesn't allow an item's content type. A move of several items is all or nothing: if one item isn't allowed, none of them move. The editor sees "The item couldn't be moved. The target workspace or folder might not allow its content type", and the event log names the content types that aren't allowed.
+
+Xperience shows the same message for every failed move, so the package can't name the content type in it. Instead, the package replaces the default English text of Xperience's two move error messages, `contenthub.contentitem.movetofolder.error` and `contenthub.contentitems.movetofolder.error`, so they mention restrictions. The new text says "might" because the same message appears when a move fails for another reason. Other admin UI languages keep Xperience's translation. If your project already replaces these strings, check which text the administration shows.
+
+The move check runs only during web requests, such as the administration and the Management API. It doesn't run during CI/CD restore, the migration tool or other processes without a request. Deleting a folder, which moves its items to the workspace root, isn't blocked.
+
 ## Library Version Matrix
 
 | Xperience Version | Library Version |
 | ----------------- | --------------- |
-| >= 31.9.3         | 2.0.0           |
+| >= 31.9.3         | 2.x             |
 | >= 31.2.1         | 1.0.0           |
 
 ## Dependencies
@@ -91,7 +97,7 @@ A folder scope cannot make a workspace-disallowed type available. Changes to wor
 
 Delete a scope from the **Folder scopes** tab to remove its restrictions from the folder and any affected descendants; workspace rules and other applicable scopes remain in effect. Scopes reference folder IDs, so renaming a folder keeps its configuration. Moving a folder changes which ancestor scopes it inherits. Folder scopes apply to ordinary content folders, not smart folders or the **All content items** view.
 
-Like workspace restrictions, folder scopes filter the administration's content creation picker. They do not validate API imports or moves of existing items between folders.
+Like workspace restrictions, folder scopes filter the administration's content creation picker and block moves into the folder. They don't check content items that are created or imported through the API.
 
 ## Running the Example Project
 

@@ -31,133 +31,133 @@ public class FolderScopeResolverTests
     [InlineData(3, false, false)]
     [InlineData(3, true, true)]
     [InlineData(4, true, false)]
-    public async Task ScopeAppliesToItsFolderAndOnlyOptedInDescendants(int folderId, bool applyToChildFolders, bool expected)
+    public void ScopeAppliesToItsFolderAndOnlyOptedInDescendants(int folderId, bool applyToChildFolders, bool expected)
     {
         var folders = new[] { Folder(1), Folder(2, 1), Folder(3, 2), Folder(4) }.ToDictionary(folder => folder.ContentFolderID);
         var scope = Scope(10, 1, applyToChildFolders);
 
-        var ids = await FolderScopeResolver.GetApplicableScopeIds(folders[folderId], [scope],
-            id => Task.FromResult(folders.GetValueOrDefault(id)));
+        var ids = FolderScopeResolver.GetApplicableScopeIds(folders[folderId], [scope],
+            id => folders.GetValueOrDefault(id));
 
         Assert.Equal(expected ? [10] : Array.Empty<int>(), ids);
     }
 
     [Fact]
-    public async Task UnsetInheritanceFlagDoesNotAffectDescendants()
+    public void UnsetInheritanceFlagDoesNotAffectDescendants()
     {
         var scope = Scope(10, 1);
         scope.SetValue(nameof(WorkspaceFolderScopeInfo.WorkspaceFolderScopeApplyToChildFolders), DBNull.Value);
 
-        var ids = await FolderScopeResolver.GetApplicableScopeIds(Folder(2, 1), [scope],
-            id => Task.FromResult<ContentFolderInfo?>(Folder(1)));
+        var ids = FolderScopeResolver.GetApplicableScopeIds(Folder(2, 1), [scope],
+            id => (ContentFolderInfo?)Folder(1));
 
         Assert.Empty(ids);
     }
 
     [Fact]
-    public async Task ChildScopeDoesNotStopInheritanceFromGrandparent()
+    public void ChildScopeDoesNotStopInheritanceFromGrandparent()
     {
         var folders = new[] { Folder(1), Folder(2, 1), Folder(3, 2) }.ToDictionary(folder => folder.ContentFolderID);
         var scopes = new[] { Scope(10, 1, true), Scope(20, 2), Scope(30, 3) };
 
-        var ids = await FolderScopeResolver.GetApplicableScopeIds(folders[3], scopes,
-            id => Task.FromResult(folders.GetValueOrDefault(id)));
+        var ids = FolderScopeResolver.GetApplicableScopeIds(folders[3], scopes,
+            id => folders.GetValueOrDefault(id));
 
         Assert.Equal([10, 30], ids);
     }
 
     [Fact]
-    public async Task IncludesEveryApplicableAncestorScope()
+    public void IncludesEveryApplicableAncestorScope()
     {
         var folders = new[] { Folder(1), Folder(2, 1), Folder(3, 2) }.ToDictionary(folder => folder.ContentFolderID);
         var scopes = new[] { Scope(10, 1, true), Scope(20, 2, true), Scope(30, 3) };
 
-        var ids = await FolderScopeResolver.GetApplicableScopeIds(folders[3], scopes,
-            id => Task.FromResult(folders.GetValueOrDefault(id)));
+        var ids = FolderScopeResolver.GetApplicableScopeIds(folders[3], scopes,
+            id => folders.GetValueOrDefault(id));
 
         Assert.Equal([10, 20, 30], ids);
     }
 
     [Fact]
-    public async Task DisablingInheritanceKeepsScopeOnItsFolder()
+    public void DisablingInheritanceKeepsScopeOnItsFolder()
     {
         var parent = Folder(1);
         var child = Folder(2, 1);
         var scope = Scope(10, 1, true);
-        Task<ContentFolderInfo?> GetFolder(int id) => Task.FromResult<ContentFolderInfo?>(parent);
+        ContentFolderInfo? GetFolder(int id) => parent;
 
-        var before = await FolderScopeResolver.GetApplicableScopeIds(child, [scope], GetFolder);
+        var before = FolderScopeResolver.GetApplicableScopeIds(child, [scope], GetFolder);
         Assert.Equal([10], before);
         scope.WorkspaceFolderScopeApplyToChildFolders = false;
-        Assert.Empty(await FolderScopeResolver.GetApplicableScopeIds(child, [scope], GetFolder));
-        var direct = await FolderScopeResolver.GetApplicableScopeIds(parent, [scope], GetFolder);
+        Assert.Empty(FolderScopeResolver.GetApplicableScopeIds(child, [scope], GetFolder));
+        var direct = FolderScopeResolver.GetApplicableScopeIds(parent, [scope], GetFolder);
         Assert.Equal([10], direct);
     }
 
     [Fact]
-    public async Task ReassigningScopeMovesInheritanceToNewFolderTree()
+    public void ReassigningScopeMovesInheritanceToNewFolderTree()
     {
         var folders = new[] { Folder(1), Folder(2, 1), Folder(3), Folder(4, 3) }.ToDictionary(folder => folder.ContentFolderID);
         var scope = Scope(10, 1, true);
-        Task<ContentFolderInfo?> GetFolder(int id) => Task.FromResult(folders.GetValueOrDefault(id));
+        ContentFolderInfo? GetFolder(int id) => folders.GetValueOrDefault(id);
 
-        var before = await FolderScopeResolver.GetApplicableScopeIds(folders[2], [scope], GetFolder);
+        var before = FolderScopeResolver.GetApplicableScopeIds(folders[2], [scope], GetFolder);
         Assert.Equal([10], before);
-        Assert.Empty(await FolderScopeResolver.GetApplicableScopeIds(folders[4], [scope], GetFolder));
+        Assert.Empty(FolderScopeResolver.GetApplicableScopeIds(folders[4], [scope], GetFolder));
 
         scope.WorkspaceFolderScopeFolderID = 3;
 
-        Assert.Empty(await FolderScopeResolver.GetApplicableScopeIds(folders[2], [scope], GetFolder));
-        var after = await FolderScopeResolver.GetApplicableScopeIds(folders[4], [scope], GetFolder);
+        Assert.Empty(FolderScopeResolver.GetApplicableScopeIds(folders[2], [scope], GetFolder));
+        var after = FolderScopeResolver.GetApplicableScopeIds(folders[4], [scope], GetFolder);
         Assert.Equal([10], after);
     }
 
     [Fact]
-    public async Task MovingFolderChangesItsInheritedScopes()
+    public void MovingFolderChangesItsInheritedScopes()
     {
         var folders = new[] { Folder(1), Folder(2, 1), Folder(3) }.ToDictionary(folder => folder.ContentFolderID);
         var scopes = new[] { Scope(10, 1, true), Scope(30, 3, true) };
-        Task<ContentFolderInfo?> GetFolder(int id) => Task.FromResult(folders.GetValueOrDefault(id));
+        ContentFolderInfo? GetFolder(int id) => folders.GetValueOrDefault(id);
 
-        var before = await FolderScopeResolver.GetApplicableScopeIds(folders[2], scopes, GetFolder);
+        var before = FolderScopeResolver.GetApplicableScopeIds(folders[2], scopes, GetFolder);
         Assert.Equal([10], before);
         folders[2].ContentFolderParentFolderID = 3;
-        var after = await FolderScopeResolver.GetApplicableScopeIds(folders[2], scopes, GetFolder);
+        var after = FolderScopeResolver.GetApplicableScopeIds(folders[2], scopes, GetFolder);
         Assert.Equal([30], after);
     }
 
     [Fact]
-    public async Task ScopesAndAncestorsFromOtherWorkspacesAreIgnored()
+    public void ScopesAndAncestorsFromOtherWorkspacesAreIgnored()
     {
         var child = Folder(2, 1);
         var parent = Folder(1, workspaceId: 2);
         var scopes = new[] { Scope(10, 1, true), Scope(20, 2, workspaceId: 2), Scope(30, 2) };
 
-        var ids = await FolderScopeResolver.GetApplicableScopeIds(child, scopes,
-            id => Task.FromResult<ContentFolderInfo?>(parent));
+        var ids = FolderScopeResolver.GetApplicableScopeIds(child, scopes,
+            id => (ContentFolderInfo?)parent);
 
         Assert.Equal([30], ids);
     }
 
     [Fact]
-    public async Task MissingParentDoesNotDiscardDirectScope()
+    public void MissingParentDoesNotDiscardDirectScope()
     {
         var scopes = new[] { Scope(10, 1, true), Scope(20, 2) };
 
-        var ids = await FolderScopeResolver.GetApplicableScopeIds(Folder(2, 1), scopes,
-            id => Task.FromResult<ContentFolderInfo?>(null));
+        var ids = FolderScopeResolver.GetApplicableScopeIds(Folder(2, 1), scopes,
+            id => (ContentFolderInfo?)null);
 
         Assert.Equal([20], ids);
     }
 
     [Fact]
-    public async Task CyclicHierarchyTerminatesWithoutDuplicatingScopes()
+    public void CyclicHierarchyTerminatesWithoutDuplicatingScopes()
     {
         var folders = new[] { Folder(1, 2), Folder(2, 1) }.ToDictionary(folder => folder.ContentFolderID);
         var scopes = new[] { Scope(10, 1, true), Scope(20, 2) };
 
-        var ids = await FolderScopeResolver.GetApplicableScopeIds(folders[2], scopes,
-            id => Task.FromResult(folders.GetValueOrDefault(id)));
+        var ids = FolderScopeResolver.GetApplicableScopeIds(folders[2], scopes,
+            id => folders.GetValueOrDefault(id));
 
         Assert.Equal([10, 20], ids);
     }
