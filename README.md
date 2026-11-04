@@ -19,19 +19,16 @@ Restricts which reusable content types are available when creating content items
 ## Screenshots
 
 The **Allowed content types** tab on a workspace builds an allow list:
-<a href="/src/images/AllowedContentTypes.png">
-  <img src="/src/images/AllowedContentTypes.png" width="800" alt="Allowed content types tab on a workspace in Xperience by Kentico">
-</a>
+
+![Allowed content types tab on a workspace in Xperience by Kentico](https://raw.githubusercontent.com/liamgold/xperience-community-workspace-restrictions/main/src/images/AllowedContentTypes.png)
 
 The **Excluded content types** tab builds an exclude list:
-<a href="/src/images/ExcludedContentTypes.png">
-  <img src="/src/images/ExcludedContentTypes.png" width="800" alt="Excluded content types tab on a workspace in Xperience by Kentico">
-</a>
 
-When an editor creates a content item, the content type picker is filtered by the workspace configuration:
-<a href="/src/images/FilteredContentTypePicker.png">
-  <img src="/src/images/FilteredContentTypePicker.png" width="800" alt="Filtered content type picker when creating a content item in Xperience by Kentico">
-</a>
+![Excluded content types tab on a workspace in Xperience by Kentico](https://raw.githubusercontent.com/liamgold/xperience-community-workspace-restrictions/main/src/images/ExcludedContentTypes.png)
+
+When an editor creates a content item, the workspace configuration filters the content type picker:
+
+![Filtered content type picker when creating a content item in Xperience by Kentico](https://raw.githubusercontent.com/liamgold/xperience-community-workspace-restrictions/main/src/images/FilteredContentTypePicker.png)
 
 ## Library Version Matrix
 
@@ -69,6 +66,18 @@ dotnet add package XperienceCommunity.WorkspaceRestrictions
 2. Select **New folder scope**, choose a folder in that workspace, optionally enable **Apply to child folders**, and save.
 3. Configure the scope's **Allowed content types** or **Excluded content types** tab, using the same controls as workspace restrictions.
 4. Create a content item from that folder in the Content hub to see the filtered content type picker.
+
+The **Folder scopes** tab lists the scopes in the workspace:
+
+![Folder scopes tab on a workspace in Xperience by Kentico](https://raw.githubusercontent.com/liamgold/xperience-community-workspace-restrictions/main/src/images/FolderScopes.png)
+
+The scope's **Settings** page sets its folder and whether it applies to child folders:
+
+![Settings page of a folder scope in Xperience by Kentico](https://raw.githubusercontent.com/liamgold/xperience-community-workspace-restrictions/main/src/images/FolderScopeSettings.png)
+
+In this example, the workspace excludes **Cafe** and **Contact**. The `/Coffee` scope excludes **Event** and applies to child folders. The `/Coffee/Brazil` scope allows **Event**, **Image** and **Testimonial**. The picker for `/Coffee/Brazil` offers only **Image** and **Testimonial**, because the parent scope blocks **Event**:
+
+![Content type picker filtered by folder scopes in Xperience by Kentico](https://raw.githubusercontent.com/liamgold/xperience-community-workspace-restrictions/main/src/images/FolderScopeContentTypePicker.png)
 
 Each folder can have one scope. **Apply to child folders** is off by default, including for existing scopes after upgrading. When enabled, the scope also applies to all descendants, including folders created later. A folder without its own scope still receives any applicable ancestor scopes; if none apply, it uses the workspace restrictions alone.
 
