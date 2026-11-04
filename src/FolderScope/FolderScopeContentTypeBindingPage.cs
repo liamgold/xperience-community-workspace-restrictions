@@ -33,7 +33,7 @@ public abstract class FolderScopeContentTypeBindingPage<TBindingInfo>(
 
     public override async Task ConfigurePage()
     {
-        var restriction = await ContentTypeRestriction.ForWorkspace(WorkspaceId, allowedProvider, excludedProvider);
+        var restriction = ContentTypeRestriction.ForWorkspace(WorkspaceId, allowedProvider, excludedProvider);
 
         PageConfiguration.ExistingBindingsListing.Caption = Caption;
         PageConfiguration.BindingSidePanelListing.Caption = "Content types allowed by the workspace";

@@ -9,13 +9,13 @@
 	<PropertyGroup>
 		<Title>Xperience Community Workspace Restrictions</Title>
 		<PackageId>XperienceCommunity.WorkspaceRestrictions</PackageId>
-		<Version>2.0.0</Version>
+		<Version>2.1.0</Version>
 		<Authors>Liam Goldfinch</Authors>
 		<Company>Liam Goldfinch</Company>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageTags>kentico xperience workspace restrictions content-types folder-scopes</PackageTags>
 		<Description>
-			Restrict which reusable content types are available when creating content items in a workspace or one of its folders in Xperience by Kentico.
+			Restrict which reusable content types editors can create in, or move into, a workspace or one of its folders in Xperience by Kentico.
 		</Description>
 		<PackageProjectUrl>https://github.com/liamgold/xperience-community-workspace-restrictions</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/liamgold/xperience-community-workspace-restrictions</RepositoryUrl>

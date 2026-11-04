@@ -11,12 +11,7 @@ namespace XperienceCommunity.WorkspaceRestrictions;
 
 public class WorkspaceContentTypeFilterExtender : PageExtender<ContentItemCreate>
 {
-    private readonly IInfoProvider<WorkspaceContentTypeAllowedInfo> allowedProvider;
-    private readonly IInfoProvider<WorkspaceContentTypeExcludedInfo> excludedProvider;
-    private readonly IInfoProvider<WorkspaceFolderScopeInfo> scopeProvider;
-    private readonly IInfoProvider<FolderScopeContentTypeAllowedInfo> folderAllowedProvider;
-    private readonly IInfoProvider<FolderScopeContentTypeExcludedInfo> folderExcludedProvider;
-    private readonly IInfoProvider<ContentFolderInfo> folderProvider;
+    private readonly ContentTypeRestrictionResolver resolver;
 
     public WorkspaceContentTypeFilterExtender(
         IInfoProvider<WorkspaceContentTypeAllowedInfo> allowedProvider,
@@ -26,37 +21,35 @@ public class WorkspaceContentTypeFilterExtender : PageExtender<ContentItemCreate
         IInfoProvider<FolderScopeContentTypeExcludedInfo> folderExcludedProvider,
         IInfoProvider<ContentFolderInfo> folderProvider)
     {
-        this.allowedProvider = allowedProvider;
-        this.excludedProvider = excludedProvider;
-        this.scopeProvider = scopeProvider;
-        this.folderAllowedProvider = folderAllowedProvider;
-        this.folderExcludedProvider = folderExcludedProvider;
-        this.folderProvider = folderProvider;
+        resolver = new ContentTypeRestrictionResolver(allowedProvider, excludedProvider, scopeProvider,
+            folderAllowedProvider, folderExcludedProvider, folderProvider);
     }
 
-    public override async Task<TemplateClientProperties> ConfigureTemplateProperties(TemplateClientProperties properties)
+    public override Task<TemplateClientProperties> ConfigureTemplateProperties(TemplateClientProperties properties)
     {
         if (properties is not ContentItemClientProperties contentItemProps)
         {
-            return properties;
+            return Task.FromResult(properties);
         }
 
         var workspaceId = Page.WorkspaceIdentifier?.WorkspaceID;
         if (workspaceId is null or 0)
         {
-            return properties;
+            return Task.FromResult(properties);
         }
 
         if (contentItemProps.Items.OfType<TileSelectorClientProperties>().FirstOrDefault() is not { } tileProps)
         {
-            return properties;
+            return Task.FromResult(properties);
         }
 
-        var workspaceRestriction = await ContentTypeRestriction.ForWorkspace(workspaceId.Value, allowedProvider, excludedProvider);
-        var folderRestrictions = await GetFolderRestrictions(workspaceId.Value);
-        FilterContentTypes(tileProps, workspaceRestriction, folderRestrictions);
+        // Smart folders have their own IDs and must not match a content folder scope.
+        var folderId = Page.FolderId.FolderType == FolderType.Content ? Page.FolderId.Id ?? 0 : 0;
 
-        return properties;
+        FilterContentTypes(tileProps, resolver.GetWorkspaceRestriction(workspaceId.Value),
+            resolver.GetFolderRestrictions(workspaceId.Value, folderId));
+
+        return Task.FromResult(properties);
     }
 
     internal static void FilterContentTypes(TileSelectorClientProperties properties,
@@ -69,42 +62,5 @@ public class WorkspaceContentTypeFilterExtender : PageExtender<ContentItemCreate
         {
             properties.Value = null;
         }
-    }
-
-    private async Task<IReadOnlyCollection<ContentTypeRestriction>> GetFolderRestrictions(int workspaceId)
-    {
-        // Smart folders have their own IDs and must not match a content folder scope.
-        if (Page.FolderId.FolderType != FolderType.Content || Page.FolderId.Id is not > 0)
-        {
-            return [];
-        }
-
-        var folder = await folderProvider.GetAsync(Page.FolderId.Id.Value);
-        if (folder == null || folder.ContentFolderWorkspaceID != workspaceId)
-        {
-            return [];
-        }
-
-        var scopes = await scopeProvider.Get()
-            .WhereEquals(nameof(WorkspaceFolderScopeInfo.WorkspaceFolderScopeWorkspaceID), workspaceId)
-            .GetEnumerableTypedResultAsync();
-        var scopeIds = await FolderScopeResolver.GetApplicableScopeIds(folder, scopes, async id => await folderProvider.GetAsync(id));
-
-        if (scopeIds.Length == 0)
-        {
-            return [];
-        }
-
-        var allowedBindings = (await folderAllowedProvider.Get()
-            .WhereIn(nameof(FolderScopeContentTypeAllowedInfo.FolderScopeContentTypeAllowedFolderScopeID), scopeIds)
-            .GetEnumerableTypedResultAsync())
-            .ToLookup(binding => binding.FolderScopeContentTypeAllowedFolderScopeID, binding => binding.FolderScopeContentTypeAllowedClassID);
-        var excludedBindings = (await folderExcludedProvider.Get()
-            .WhereIn(nameof(FolderScopeContentTypeExcludedInfo.FolderScopeContentTypeExcludedFolderScopeID), scopeIds)
-            .GetEnumerableTypedResultAsync())
-            .ToLookup(binding => binding.FolderScopeContentTypeExcludedFolderScopeID, binding => binding.FolderScopeContentTypeExcludedClassID);
-
-        // Keep each scope separate so its allow-list precedence cannot override another scope's restrictions.
-        return scopeIds.Select(id => new ContentTypeRestriction(allowedBindings[id].ToHashSet(), excludedBindings[id].ToHashSet())).ToArray();
     }
 }

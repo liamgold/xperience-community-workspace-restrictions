@@ -9,9 +9,14 @@ content types editors can create in a workspace or in one of its folders.
 - The package has no migrations. `WorkspaceRestrictionsInstaller` creates and updates the tables
   every time the application starts. Keep it idempotent, and never let it delete or merge existing
   data.
-- The package applies restrictions only by filtering the content type picker on the create page
-  (`WorkspaceContentTypeFilterExtender`). Nothing checks the content type when an item is saved,
-  moved or imported. Issue #6 tracks this gap.
+- The package filters the content type picker on the create page
+  (`WorkspaceContentTypeFilterExtender`) and blocks Content hub moves during web requests
+  (`ContentItemMoveGuard`). Both use `ContentTypeRestrictionResolver`, which stays synchronous
+  because the guard runs inside Kentico's move transaction. The guard depends on how Kentico's
+  internal move code saves items, so test single and mass moves after an Xperience upgrade. Kentico
+  shows its own error message when a move fails, so `src/Localization` replaces the English text
+  of those two resource keys. Check after an upgrade that the keys still exist. Nothing
+  checks items that are created or imported through the API. Issue #6 tracks this gap.
 - The SQL Server tests in `tests/FolderScopeDatabaseTests.cs` are skipped unless
   `WORKSPACE_RESTRICTIONS_TEST_CONNECTION_STRING` is set, and the test run still passes. Set the
   variable before you change the installer or `WorkspaceFolderScopePersistence`. The README shows
