@@ -8,10 +8,11 @@
 
 ## Description
 
-Restricts which reusable content types are available when creating content items in a workspace in [Xperience by Kentico](https://www.kentico.com/).
+Restricts which reusable content types are available when creating content items in a workspace or one of its folders in [Xperience by Kentico](https://www.kentico.com/).
 
 - **Allow list**: Only the listed content types appear in the "Create content item" dialog for the workspace.
 - **Exclude list**: All content types except the listed ones appear in the "Create content item" dialog for the workspace.
+- **Folder scopes**: Further restrict the content types available in a selected folder using its own allow or exclude list, optionally applying the scope to all nested folders. The available choices are limited to content types permitted by the parent workspace. See [Folder Scopes](#folder-scopes).
 
 > The allow list takes precedence over the exclude list. If any allowed content types are configured, the exclude list is ignored for that workspace.
 
@@ -61,6 +62,27 @@ dotnet add package XperienceCommunity.WorkspaceRestrictions
 1. Use the **Allowed content types** tab to build an allow list, or the **Excluded content types** tab to build an exclude list.
 
 1. That's it. Changes take effect immediately, without a restart. Create a content item in the workspace to see the filtered content type picker.
+
+## Folder Scopes
+
+1. Open the workspace's **Folder scopes** tab.
+2. Select **New folder scope**, choose a folder in that workspace, optionally enable **Apply to child folders**, and save.
+3. Configure the scope's **Allowed content types** or **Excluded content types** tab, using the same controls as workspace restrictions.
+4. Create a content item from that folder in the Content hub to see the filtered content type picker.
+
+Each folder can have one scope. **Apply to child folders** is off by default, including for existing scopes after upgrading. When enabled, the scope also applies to all descendants, including folders created later. A folder without its own scope still receives any applicable ancestor scopes; if none apply, it uses the workspace restrictions alone.
+
+The database enforces one scope per workspace/folder, including when users save concurrently. If an older preview contains duplicate scopes, reconcile them before upgrading; installation does not automatically delete or merge conflicting rules.
+
+To edit an existing scope, open it from the listing. It opens on **Settings**, the first item in the scope navigation, followed by **Allowed content types** and **Excluded content types**. Change **Folder** to another folder in the same workspace or toggle **Apply to child folders**, then save. Changing the folder preserves the scope's allowed and excluded content type selections. A folder that already has another scope cannot be selected as the destination.
+
+The workspace rules, every applicable ancestor scope, and the folder's own scope are combined. A content type must be permitted by all of them. Within each scope, a non-empty allow list takes precedence over that scope's exclude list. Empty lists add no restrictions. A child scope cannot restore a type blocked by an ancestor, and leaving its **Apply to child folders** setting off does not stop inheritance from higher ancestors. For example, if a workspace allows **Article**, **Image**, and **Video**, a parent scope can exclude **Video** for its whole subtree, and a child scope can narrow the choices further to **Image**.
+
+A folder scope cannot make a workspace-disallowed type available. Changes to workspace restrictions take effect immediately, including for existing scopes. Previously selected types remain visible in the scope's existing bindings so they can be removed, but unavailable types cannot be added. If none of a folder's allowed types remain permitted by the workspace, the picker offers no types.
+
+Delete a scope from the **Folder scopes** tab to remove its restrictions from the folder and any affected descendants; workspace rules and other applicable scopes remain in effect. Scopes reference folder IDs, so renaming a folder keeps its configuration. Moving a folder changes which ancestor scopes it inherits. Folder scopes apply to ordinary content folders, not smart folders or the **All content items** view.
+
+Like workspace restrictions, folder scopes filter the administration's content creation picker. They do not validate API imports or moves of existing items between folders.
 
 ## Running the Example Project
 

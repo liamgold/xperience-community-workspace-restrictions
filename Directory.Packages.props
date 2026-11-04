@@ -12,5 +12,8 @@
     <PackageVersion Include="Kentico.Xperience.managementapi" Version="31.9.3" />
     <PackageVersion Include="Kentico.Xperience.mjml" Version="31.9.3" />
     <PackageVersion Include="Kentico.Xperience.webapp" Version="31.9.3" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageVersion Include="xunit" Version="2.9.2" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
   </ItemGroup>
 </Project>

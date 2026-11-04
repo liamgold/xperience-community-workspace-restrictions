@@ -23,6 +23,11 @@ public class WorkspaceEditSectionExtender : PageExtender<WorkspaceEditSection>
             Label = "Excluded content types",
             Path = WorkspaceContentTypeExcludedPage.SLUG,
         });
+        items.Add(new NavigationItem
+        {
+            Label = "Folder scopes",
+            Path = WorkspaceFolderScopeListingPage.SLUG,
+        });
 
         properties.Navigation.Items = items;
 

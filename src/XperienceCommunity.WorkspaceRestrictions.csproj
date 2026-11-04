@@ -13,9 +13,9 @@
 		<Authors>Liam Goldfinch</Authors>
 		<Company>Liam Goldfinch</Company>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageTags>kentico xperience workspace restrictions content-types</PackageTags>
+		<PackageTags>kentico xperience workspace restrictions content-types folder-scopes</PackageTags>
 		<Description>
-			Restrict which reusable content types are available when creating content items in a workspace in Xperience by Kentico.
+			Restrict which reusable content types are available when creating content items in a workspace or one of its folders in Xperience by Kentico.
 		</Description>
 		<PackageProjectUrl>https://github.com/liamgold/xperience-community-workspace-restrictions</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/liamgold/xperience-community-workspace-restrictions</RepositoryUrl>
