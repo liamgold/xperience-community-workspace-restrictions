@@ -15,8 +15,12 @@ content types editors can create in a workspace or in one of its folders.
   because the guard runs inside Kentico's move transaction. The guard depends on how Kentico's
   internal move code saves items, so test single and mass moves after an Xperience upgrade. Kentico
   shows its own error message when a move fails, so `src/Localization` replaces the English text
-  of those two resource keys. Check after an upgrade that the keys still exist. Nothing
-  checks items that are created or imported through the API. Issue #6 tracks this gap.
+  of those two resource keys. Check after an upgrade that the keys still exist.
+- Nothing checks the content type when an item is created. Kentico creates an item in the
+  workspace root and then moves it into the chosen folder in the same request, and the guard skips
+  that move on purpose, because blocking it strands the new item in the root. So the create page's
+  Location field (#6) and the selector's Create new dialog (#2) can still put a disallowed type
+  into a scoped folder. API creates and imports aren't checked either.
 - The SQL Server tests in `tests/FolderScopeDatabaseTests.cs` are skipped unless
   `WORKSPACE_RESTRICTIONS_TEST_CONNECTION_STRING` is set, and the test run still passes. Set the
   variable before you change the installer or `WorkspaceFolderScopePersistence`. The README shows
