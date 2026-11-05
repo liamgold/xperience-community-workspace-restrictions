@@ -36,6 +36,8 @@ Xperience shows the same message for every failed move, so the package can't nam
 
 The move check runs only during web requests, such as the administration and the Management API. It doesn't run during CI/CD restore, the migration tool or other processes without a request. Deleting a folder, which moves its items to the workspace root, isn't blocked.
 
+The **Create new** button of a content item selector, for example in a widget or a content item field, doesn't apply restrictions. Xperience creates the new item in the workspace root and then moves it into the chosen folder, in the same request. The move check skips items created during the request, so it doesn't block that move and leave the new item in the root. [Issue #2](https://github.com/liamgold/xperience-community-workspace-restrictions/issues/2) tracks restricting this dialog.
+
 ## Library Version Matrix
 
 | Xperience Version | Library Version |
